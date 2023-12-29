@@ -129,6 +129,7 @@ export default function Header({ user, setUser, isLogged, setIsLogged }) {
         { withCredentials: true }
       )
       .then((res) => {
+        console.log(res);
         const { username, sign } = res.data;
         setIsLogged(true);
         setUser({

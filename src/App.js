@@ -111,37 +111,35 @@ function App() {
   }, []);
 
   useEffect(() => {
-    if (cookies.get("jwt")) {
-      // 컴포넌트가 마운트될 때 소켓을 초기화
-      socketRef.current = io(`http://43.203.11.102:3131`, {
-        extraHeaders: {
-          authorization: cookies.get("jwt"), // 원하는 헤더 정보 추가
-        },
-      });
+    // 컴포넌트가 마운트될 때 소켓을 초기화
+    socketRef.current = io(`http://43.203.11.102:3131`, {
+      extraHeaders: {
+        authorization: cookies.get("jwt"), // 원하는 헤더 정보 추가
+      },
+    });
 
-      socketRef.current.on("connect", () => {
-        socketRef.current.on("recentchats", (recentchats) => {
-          setChats([...recentchats]);
-        });
-        socketRef.current.on("chats", (message) => {
-          setChats((prevChats) => [
-            ...prevChats,
-            { date: new Date(), ...message },
-          ]);
-        });
+    socketRef.current.on("connect", () => {
+      socketRef.current.on("recentchats", (recentchats) => {
+        setChats([...recentchats]);
       });
-
-      socketRef.current.on("disconnect", () => {
-        console.log("서버와 연결이 끊어졌습니다!");
+      socketRef.current.on("chats", (message) => {
+        setChats((prevChats) => [
+          ...prevChats,
+          { date: new Date(), ...message },
+        ]);
       });
+    });
 
-      // 컴포넌트가 언마운트될 때 소켓 연결 해제
-      return () => {
-        if (socketRef.current) {
-          socketRef.current.disconnect();
-        }
-      };
-    }
+    socketRef.current.on("disconnect", () => {
+      console.log("서버와 연결이 끊어졌습니다!");
+    });
+
+    // 컴포넌트가 언마운트될 때 소켓 연결 해제
+    return () => {
+      if (socketRef.current) {
+        socketRef.current.disconnect();
+      }
+    };
   }, [cookies.get("jwt")]);
 
   function send() {
