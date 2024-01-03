@@ -138,7 +138,7 @@ export default function Header({ user, setUser, isLogged, setIsLogged }) {
         });
       })
       .catch((err) => {
-        alert(err);
+        console.log(err);
       });
     setInput({
       id: "",
